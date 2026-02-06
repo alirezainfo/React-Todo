@@ -13,6 +13,7 @@ interface TodoState {
   addTodo: (title: string) => void;
   deleteTodo: (id: number) => void;
   updateTodo: (id: number, title: string) => void;
+  completedTodo: (id: number, completed: boolean) => void;
 }
 
 export const useTodoState = create<TodoState>()(
@@ -43,7 +44,23 @@ export const useTodoState = create<TodoState>()(
         }));
       },
 
-      updateTodo: (id: number, title: string) => {},
+      updateTodo: (id: number, title: string) => {
+        if(!title.trim()) return;
+
+        set((state)=> ({
+          todos: state.todos.map((item)=>
+            item.id === id ? {...item, title: title} : item
+          )
+        }))
+      },
+
+      completedTodo: (id: number, completed: boolean) => {
+        set((state)=> ({
+          todos: state.todos.map((item)=>
+            item.id === id ? {...item, completed: !item.completed} : item
+          )
+        }))
+      },
     }),
     { name: "todo-storage" },
   ),
